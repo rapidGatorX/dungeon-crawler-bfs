@@ -3,6 +3,7 @@ import Level from '../components/Level';
 import { toast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 import { RefreshCw } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Index = () => {
   const [levels, setLevels] = useState<boolean[][]>(
@@ -104,6 +105,22 @@ const Index = () => {
             Reset Game
           </Button>
         </div>
+
+        <Card className="bg-dungeon-primary/20 backdrop-blur-sm border-dungeon-accent/20">
+          <CardHeader>
+            <CardTitle className="text-dungeon-accent">How to Play</CardTitle>
+          </CardHeader>
+          <CardContent className="text-white/80 space-y-2">
+            <p>🎮 Welcome to Dungeon Crawler! Here's how to play:</p>
+            <ul className="list-disc list-inside space-y-1">
+              <li>Start from Level 1 and work your way up through the dungeon</li>
+              <li>You must visit chambers from left to right in each level</li>
+              <li>Complete a level by visiting all its chambers</li>
+              <li>Progress through all 10 levels to win the game</li>
+              <li>Use the Reset button to start over at any time</li>
+            </ul>
+          </CardContent>
+        </Card>
         
         {levels.map((chambers, idx) => (
           <div 
