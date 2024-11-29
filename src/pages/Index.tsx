@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Level from '../components/Level';
-import Adventurer from '../components/Adventurer';
 import { toast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
 import { RefreshCw } from 'lucide-react';
 
 const Index = () => {
-  // Create levels with correct number of chambers (1-10)
   const [levels, setLevels] = useState<boolean[][]>(
     Array(10).fill(null).map((_, i) => Array(i + 1).fill(false))
   );
@@ -18,6 +16,19 @@ const Index = () => {
 
   const handleChamberClick = (chamber: number) => {
     if (isJumping || isReturning) return;
+    
+    // Only allow clicking the next unvisited chamber from left to right
+    const currentLevelChambers = levels[currentLevel];
+    const nextUnvisitedIndex = currentLevelChambers.findIndex(visited => !visited);
+    
+    if (chamber !== nextUnvisitedIndex) {
+      toast({
+        title: "Invalid Move",
+        description: "You must visit chambers from left to right!",
+        variant: "destructive"
+      });
+      return;
+    }
     
     const newLevels = [...levels];
     newLevels[currentLevel][chamber] = true;
@@ -43,6 +54,7 @@ const Index = () => {
         // Move to next level or return to top
         if (currentLevel < 9) {
           setCurrentLevel(prev => prev + 1);
+          setCurrentChamber(null);
         } else {
           setIsReturning(true);
           setTimeout(() => {
@@ -92,11 +104,6 @@ const Index = () => {
             completed={completedLevels[idx]}
           />
         ))}
-        
-        <Adventurer
-          jumping={isJumping}
-          returning={isReturning}
-        />
       </div>
     </div>
   );

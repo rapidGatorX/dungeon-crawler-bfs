@@ -1,5 +1,6 @@
 import React from 'react';
 import { cn } from "@/lib/utils";
+import { User } from 'lucide-react';
 
 interface ChamberProps {
   number: number;
@@ -20,7 +21,11 @@ const Chamber = ({ number, visited, current, onClick }: ChamberProps) => {
         "hover:scale-105"
       )}
     >
-      {number}
+      {current ? (
+        <User className="w-6 h-6 text-dungeon-accent animate-pulse" />
+      ) : (
+        number
+      )}
       {visited && (
         <div className="absolute -top-1 -right-1 w-3 h-3 bg-dungeon-accent rounded-full animate-pulse" />
       )}
