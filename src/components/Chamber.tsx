@@ -22,7 +22,7 @@ const Chamber = ({ number, visited, current, onClick }: ChamberProps) => {
     >
       {number}
       {visited && (
-        <div className="absolute -top-1 -right-1 w-3 h-3 bg-dungeon-accent rounded-full" />
+        <div className="absolute -top-1 -right-1 w-3 h-3 bg-dungeon-accent rounded-full animate-pulse" />
       )}
     </div>
   );

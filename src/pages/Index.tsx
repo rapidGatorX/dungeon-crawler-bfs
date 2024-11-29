@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react';
 import Level from '../components/Level';
 import Adventurer from '../components/Adventurer';
 import { toast } from '@/components/ui/use-toast';
+import { Button } from '@/components/ui/button';
+import { RefreshCw } from 'lucide-react';
 
 const Index = () => {
+  // Create levels with correct number of chambers (1-10)
   const [levels, setLevels] = useState<boolean[][]>(
-    Array(10).fill(null).map((_, i) => Array((i + 1) * (i + 1)).fill(false))
+    Array(10).fill(null).map((_, i) => Array(i + 1).fill(false))
   );
   const [currentLevel, setCurrentLevel] = useState(0);
   const [currentChamber, setCurrentChamber] = useState<number | null>(null);
@@ -43,8 +46,7 @@ const Index = () => {
         } else {
           setIsReturning(true);
           setTimeout(() => {
-            setCurrentLevel(0);
-            setIsReturning(false);
+            resetGame();
             toast({
               title: "Congratulations!",
               description: "You've completed all levels! Starting over...",
@@ -55,12 +57,30 @@ const Index = () => {
     }, 500);
   };
 
+  const resetGame = () => {
+    setLevels(Array(10).fill(null).map((_, i) => Array(i + 1).fill(false)));
+    setCompletedLevels(Array(10).fill(false));
+    setCurrentLevel(0);
+    setCurrentChamber(null);
+    setIsReturning(false);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-dungeon-primary to-dungeon-chamber p-8 overflow-hidden">
       <div className="max-w-4xl mx-auto space-y-8 relative">
-        <h1 className="text-4xl font-bold text-center text-dungeon-accent mb-8">
-          Dungeon Crawler
-        </h1>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-4xl font-bold text-center text-dungeon-accent">
+            Dungeon Crawler
+          </h1>
+          <Button
+            onClick={resetGame}
+            variant="outline"
+            className="bg-dungeon-chamber text-dungeon-accent hover:bg-dungeon-primary"
+          >
+            <RefreshCw className="mr-2 h-4 w-4" />
+            Reset Game
+          </Button>
+        </div>
         
         {levels.map((chambers, idx) => (
           <Level
