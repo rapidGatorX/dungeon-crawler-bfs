@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Level from '../components/Level';
 import { toast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
@@ -13,11 +13,24 @@ const Index = () => {
   const [isJumping, setIsJumping] = useState(false);
   const [isReturning, setIsReturning] = useState(false);
   const [completedLevels, setCompletedLevels] = useState<boolean[]>(Array(10).fill(false));
+  
+  // Add ref for the current level element
+  const levelRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  // Scroll to current level whenever it changes
+  useEffect(() => {
+    const currentLevelElement = levelRefs.current[currentLevel];
+    if (currentLevelElement) {
+      currentLevelElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }
+  }, [currentLevel]);
 
   const handleChamberClick = (chamber: number) => {
     if (isJumping || isReturning) return;
     
-    // Only allow clicking the next unvisited chamber from left to right
     const currentLevelChambers = levels[currentLevel];
     const nextUnvisitedIndex = currentLevelChambers.findIndex(visited => !visited);
     
@@ -40,7 +53,6 @@ const Index = () => {
     setTimeout(() => {
       setIsJumping(false);
       
-      // Check if level is complete
       if (newLevels[currentLevel].every(chamber => chamber)) {
         const newCompletedLevels = [...completedLevels];
         newCompletedLevels[currentLevel] = true;
@@ -51,7 +63,6 @@ const Index = () => {
           description: `You've cleared level ${currentLevel + 1}!`,
         });
         
-        // Move to next level or return to top
         if (currentLevel < 9) {
           setCurrentLevel(prev => prev + 1);
           setCurrentChamber(null);
@@ -80,7 +91,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-dungeon-primary to-dungeon-chamber p-8 overflow-hidden">
       <div className="max-w-4xl mx-auto space-y-8 relative">
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex justify-between items-center mb-8 sticky top-0 z-10 bg-dungeon-primary/80 backdrop-blur-sm p-4 rounded-xl">
           <h1 className="text-4xl font-bold text-center text-dungeon-accent">
             Dungeon Crawler
           </h1>
@@ -95,14 +106,18 @@ const Index = () => {
         </div>
         
         {levels.map((chambers, idx) => (
-          <Level
+          <div 
             key={idx}
-            level={idx + 1}
-            chambers={chambers}
-            currentChamber={idx === currentLevel ? currentChamber : null}
-            onChamberClick={handleChamberClick}
-            completed={completedLevels[idx]}
-          />
+            ref={el => levelRefs.current[idx] = el}
+          >
+            <Level
+              level={idx + 1}
+              chambers={chambers}
+              currentChamber={idx === currentLevel ? currentChamber : null}
+              onChamberClick={handleChamberClick}
+              completed={completedLevels[idx]}
+            />
+          </div>
         ))}
       </div>
     </div>
